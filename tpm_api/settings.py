@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 import secrets
 from pathlib import Path
 
@@ -21,12 +22,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-length = 50
-chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+# secret.key file should be ignored by git,
+# so the secret key is kept secret
+SECRET_FILE = os.path.join(BASE_DIR, 'secret.key')
 
-secret_key = ''.join(secrets.choice(chars) for i in range(length))
+# try to get the secret from a file
+try:
+    SECRET_KEY = open(SECRET_FILE).read().strip()
 
-print(secret_key)
+# if the file do not exists, generate the file
+except IOError:
+    length = 50
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+
+    SECRET_KEY = ''.join(secrets.choice(chars) for i in range(length))
+
+    # save on the file, to keep the same next time
+    open(SECRET_FILE, 'w+').write(SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -110,19 +122,34 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
+#ugettext = lambda s: s
+#LANGUAGES = (
+#    ('pt_BR', ugettext('Português Brasileiro')),
+#    ('en_US', ugettext('English')),
+#    ('fr', ugettext('French')),
+#    ('fi', ugettext('Finnish')),
+#)
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
+#USE_L10N = True
+
 USE_TZ = True
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, 'manage_tpm', 'statics'),
+#]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

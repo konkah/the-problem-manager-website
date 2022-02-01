@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  plugin-api:
+  tpm-api:
     build:
       context: .
       dockerfile: Dockerfile
